@@ -1,5 +1,5 @@
 @extends('main')
-
+@section('title', '| Forget password')
 <!-- Main Content -->
 @section('content')
 <div class="container">
