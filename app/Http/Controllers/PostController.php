@@ -6,13 +6,20 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Post;
+use App\Category;
 use Session;
 
 class PostController extends Controller
 {
+    private $categories;
     public function __construct()
     {
         $this->middleware('auth');
+        $this->categories = Category::all();
+        $cats = [];
+        foreach ($this->categories as $category)
+           $cats[$category->id] =  $category->name;
+        $this->categories = $cats;
     }
 
     /**
@@ -34,7 +41,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        return view('posts.create')->withCategories($this->categories);
     }
 
     /**
@@ -48,11 +55,13 @@ class PostController extends Controller
         $this->validate($request, array(
                 'title' => 'required|max:255',
                 'slug' => 'required|alpha_dash|min:5|max:255|unique:posts',
+                'category_id' => 'required|integer',
                 'body' => 'required'
             ));
         $post = new Post;
         $post->title = $request->title;
         $post->slug = $request->slug;
+        $post->category_id = $request->category_id;
         $post->body = $request->body;
         $post->save();
         Session::flash('success', 'This post was added successfully.');
@@ -68,7 +77,7 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::find($id);
-        return view('posts.show')->with('post', $post);
+        return view('posts.show')->withPost($post);
     }
 
     /**
@@ -80,7 +89,7 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::find($id);
-        return view('posts.edit')->with('post', $post);
+        return view('posts.edit')->withPost($post)->withCategories($this->categories);
     }
 
     /**
@@ -93,23 +102,19 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
-        if ($request->input('slug') == $post->slug) {
-            $this->validate($request, array(
-                'title' => 'required|max:255',
-                'body' => 'required'
-            ));
-        }
-        else {
-            $this->validate($request, array(
-                'title' => 'required|max:255',
-                'slug' => 'required|alpha_dash|min:5|max:255|unique:posts',
-                'body' => 'required'
-            ));
-        }
+        $rules = array(
+            'title' => 'required|max:255',
+            'category_id' => 'required|integer',
+            'body' => 'required'
+            );
+        if ($request->input('slug') != $post->slug)
+            $rules = array_merge($rules, ['slug' => 'required|alpha_dash|min:5|max:255|unique:posts']);
+        $this->validate($request, $rules);
         
         $post = Post::find($id);
         $post->title = $request->input('title');
         $post->slug = $request->input('slug');
+        $post->category_id = $request->input('category_id');
         $post->body = $request->input('body');
         $post->save();
         Session::flash('success', 'This post was successfully changed.');

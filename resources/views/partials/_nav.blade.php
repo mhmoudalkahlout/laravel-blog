@@ -31,6 +31,7 @@
             </a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="{{ route('posts.index') }}">Posts</a></li>
+              <li><a href="{{ route('categories.index') }}">Categories</a></li>
               <li role="separator" class="divider"></li>
               <li>
                 <a href="{{ url('/logout') }}"

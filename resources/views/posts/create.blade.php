@@ -18,6 +18,10 @@
 					{{ Form::text('slug', null, array('class' => 'form-control', 'required' => '', 'data-parsley-minlength' => '5', 'data-parsley-maxlength' => '255')) }}
 				</div>
 				<div class="form-group">
+					{{ Form::label('category_id', 'Category:') }}
+					{{ Form::select('category_id', $categories, null, array('class' => 'form-control')) }}
+				</div>
+				<div class="form-group">
 					{{ Form::label('body', 'Post body:') }}
 					{{ Form::textarea('body', null, array('class' => 'form-control', 'required' => '')) }}
 				</div>

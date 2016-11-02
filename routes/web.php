@@ -18,6 +18,7 @@ Route::get('about', 'PagesController@getAbout');
 Route::get('/', 'PagesController@getIndex');
 Route::get('/home', 'PagesController@getIndex');
 Route::resource('posts', 'PostController');
+Route::resource('categories', 'CategoryController', ['only' => ['index', 'store', 'destroy']]);
 Auth::routes();
 
 
