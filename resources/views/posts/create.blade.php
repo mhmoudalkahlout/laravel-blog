@@ -2,6 +2,7 @@
 @section('title', '| create post')
 @section('stylesheets')
 	{!! Html::style('dist/css/parsley.css') !!}
+	{!! Html::style('select2-4.0.3/css/select2.min.css') !!}
 @endsection
 @section('content')
 	<div class="row">
@@ -22,6 +23,10 @@
 					{{ Form::select('category_id', $categories, null, array('class' => 'form-control')) }}
 				</div>
 				<div class="form-group">
+					{{ Form::label('tags', 'Tags:') }}
+					{{ Form::select('tags[]', $tags, null, array('class' => 'form-control select2-multi', 'multiple' => 'multiple')) }}
+				</div>
+				<div class="form-group">
 					{{ Form::label('body', 'Post body:') }}
 					{{ Form::textarea('body', null, array('class' => 'form-control', 'required' => '')) }}
 				</div>
@@ -32,9 +37,13 @@
 @endsection
 @section('scripts')
 	{!! Html::script('dist/js/parsley.min.js') !!}
+	{!! Html::script('select2-4.0.3/js/select2.min.js') !!}
 	<script type="text/javascript">
 		$(function () {
 		  $("[data-parsely-validate]").parsley();
 		});
+	</script>
+	<script type="text/javascript">
+		$('.select2-multi').select2();
 	</script>
 @endsection

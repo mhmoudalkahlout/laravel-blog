@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Post;
 use App\Category;
+use App\Tag;
 use Session;
 
 class PostController extends Controller
 {
     private $categories;
+    private $tags;
     public function __construct()
     {
         $this->middleware('auth');
@@ -20,6 +22,11 @@ class PostController extends Controller
         foreach ($this->categories as $category)
            $cats[$category->id] =  $category->name;
         $this->categories = $cats;
+        $this->tags = Tag::all();
+        $tgs = [];
+        foreach ($this->tags as $tag)
+           $tgs[$tag->id] =  $tag->name;
+        $this->tags = $tgs;
     }
 
     /**
@@ -41,7 +48,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create')->withCategories($this->categories);
+        return view('posts.create')->withCategories($this->categories)->withTags($this->tags);
     }
 
     /**
@@ -64,6 +71,7 @@ class PostController extends Controller
         $post->category_id = $request->category_id;
         $post->body = $request->body;
         $post->save();
+        $post->tags()->sync($request->tags, false);
         Session::flash('success', 'This post was added successfully.');
         return redirect()->route('posts.show', $post->id);
     }
@@ -89,7 +97,7 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::find($id);
-        return view('posts.edit')->withPost($post)->withCategories($this->categories);
+        return view('posts.edit')->withPost($post)->withCategories($this->categories)->withTags($this->tags);
     }
 
     /**
@@ -117,6 +125,7 @@ class PostController extends Controller
         $post->category_id = $request->input('category_id');
         $post->body = $request->input('body');
         $post->save();
+        $post->tags()->sync($request->tags);
         Session::flash('success', 'This post was successfully changed.');
         return redirect()->route('posts.show', $post->id);
     }
