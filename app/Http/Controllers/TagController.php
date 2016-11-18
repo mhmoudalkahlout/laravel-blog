@@ -20,7 +20,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::all();
+        $tags = Tag::paginate(5);
         return view('tags.index')->withTags($tags);
     }
 
@@ -50,7 +50,8 @@ class TagController extends Controller
      */
     public function show($id)
     {
-        //
+        $tag = Tag::find($id);
+        return view('tags.show')->withTag($tag);
     }
 
     /**
@@ -61,7 +62,8 @@ class TagController extends Controller
      */
     public function edit($id)
     {
-        //
+        $tag = Tag::find($id);
+        return view('tags.edit')->withTag($tag);
     }
 
     /**
@@ -73,6 +75,29 @@ class TagController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $tag = Tag::find($id);
+        $unique_check = (strtolower($request->name) == strtolower($tag->name))? '':'|unique:tags';
+        $this->validate($request, array(
+                'name' => 'required'.$unique_check
+            ));
+        $tag->name = $request->name;
+        $tag->save();
+        session::flash('success', 'Tag has been updated');
+        return redirect()->route('tags.show', $tag->id);
+    }
+
+     /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $tag = Tag::find($id);
+        $tag->posts()->detach();
+        $tag->delete();
+        Session::flash('success', 'This tag was successfully deleted.');
+        return redirect()->route('tags.index');
     }
 }

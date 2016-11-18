@@ -119,7 +119,6 @@ class PostController extends Controller
             $rules = array_merge($rules, ['slug' => 'required|alpha_dash|min:5|max:255|unique:posts']);
         $this->validate($request, $rules);
         
-        $post = Post::find($id);
         $post->title = $request->input('title');
         $post->slug = $request->input('slug');
         $post->category_id = $request->input('category_id');
@@ -139,6 +138,7 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+        $post->tags()->detach();
         $post->delete();
         Session::flash('success', 'This post was successfully deleted.');
         return redirect()->route('posts.index');

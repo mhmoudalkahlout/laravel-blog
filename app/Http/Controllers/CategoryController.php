@@ -20,7 +20,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::paginate(5);
         return view('categories.index')->withCategories($categories);
     }
 
@@ -33,7 +33,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, array(
-                'name' => 'required|integer|unique:categories'
+                'name' => 'required|unique:categories'
             ));
         $category = new Category();
         $category->name = $request->name;

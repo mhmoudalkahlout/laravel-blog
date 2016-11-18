@@ -4,3 +4,39 @@
 .tags span {
 	margin-right: 5px;
 }
+#comment-form {
+	margin-top: 50px;
+}
+.comment {
+	margin-bottom: 30px;
+}
+.auther-image {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	float: left;
+}
+.auther-name {
+	float: left;
+	margin-left: 15px;
+}
+.auther-name>h4 {
+	margin: 5px 0px;
+}
+.auther-time {
+	font-size: 11px;
+	font-style: italic;
+	color: #aaa;
+}
+.comment-content {
+	clear: both;
+	margin-left: 65px;
+	font-size: 16px;
+	line-height: 1.3em;
+}
+.comment-title {
+	margin-bottom: 45px;
+}
+.comment-title>i {
+	margin-right: 15px;
+}

@@ -28,21 +28,28 @@
 					<tr>
 						<td>#</td>
 						<td>Name</td>
-						<td>action</td>
+						<td></td>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($tags as $tag)
 						<tr>
 							<td>{{ $tag->id }}</td>
-							<td style="font-weight: bold">{{ $tag->name }}</td>
+							<td style="font-weight: bold"><a href="{{ route('tags.show', $tag->id) }}">{{ $tag->name }}</a></td>
 							<td>
-								
+								{{ Form::open(['route' => ['tags.destroy', $tag->id], 'method' => 'DELETE']) }}
+									{{ Form::submit('Delete', ['class' => 'btn btn-danger btn-xs', 'onClick' => 'return confirm("You are about to delete a record. This cannot be undone. Are you sure?");'])}}
+								{{ Form::close() }}
 							</td>
 						</tr>
 					@endforeach
 				</tbody>
 			</table>
+		</div>
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				{!!	$tags->links(); !!}
+			</div>
 		</div>
 	</div>
 @endsection

@@ -44,4 +44,9 @@
 			</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-md-6">
+			{!!	$categories->links(); !!}
+		</div>
+	</div>
 @endsection
