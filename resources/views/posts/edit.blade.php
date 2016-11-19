@@ -2,6 +2,13 @@
 @section('title', '| Edit post')
 @section('stylesheets')
 	{!! Html::style('select2-4.0.3/css/select2.min.css') !!}
+	<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+  	<script>
+  		tinymce.init({ 
+  			selector:'textarea',
+  			menubar: false 
+  		});
+  	</script>
 @endsection
 @section('content')
 	<div class="row">

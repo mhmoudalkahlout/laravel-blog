@@ -7,7 +7,7 @@
 			<h1>{{ $post->title }}</h1>
 			<h3>Posted in: {{ $post->Category->name }}</h3>
 			<div class="well">
-				<p>{{ $post->body }}</p>
+				<p>{!! $post->body !!}</p>
 			</div>
 			<div class="tags">
 				@foreach ($post->tags as $tag)

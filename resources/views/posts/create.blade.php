@@ -3,6 +3,13 @@
 @section('stylesheets')
 	{!! Html::style('dist/css/parsley.css') !!}
 	{!! Html::style('select2-4.0.3/css/select2.min.css') !!}
+	<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+  	<script>
+  		tinymce.init({ 
+  			selector:'textarea',
+  			menubar: false 
+  		});
+  	</script>
 @endsection
 @section('content')
 	<div class="row">
@@ -28,7 +35,7 @@
 				</div>
 				<div class="form-group">
 					{{ Form::label('body', 'Post body:') }}
-					{{ Form::textarea('body', null, array('class' => 'form-control', 'required' => '')) }}
+					{{ Form::textarea('body', null, array('class' => 'form-control')) }}
 				</div>
 				{{ Form::submit('Create post', array('class' => 'btn btn-success btn-lg btn-block', 'style' => '')) }}
 			{!! Form::close() !!}

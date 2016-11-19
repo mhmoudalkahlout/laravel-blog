@@ -9,6 +9,7 @@ use App\Post;
 use App\Category;
 use App\Tag;
 use Session;
+use Purifier;
 
 class PostController extends Controller
 {
@@ -69,7 +70,7 @@ class PostController extends Controller
         $post->title = $request->title;
         $post->slug = $request->slug;
         $post->category_id = $request->category_id;
-        $post->body = $request->body;
+        $post->body = Purifier::clean($request->body);
         $post->save();
         $post->tags()->sync($request->tags, false);
         Session::flash('success', 'This post was added successfully.');
@@ -122,7 +123,7 @@ class PostController extends Controller
         $post->title = $request->input('title');
         $post->slug = $request->input('slug');
         $post->category_id = $request->input('category_id');
-        $post->body = $request->input('body');
+        $post->body = Purifier::clean($request->input('body'));
         $post->save();
         $post->tags()->sync($request->tags);
         Session::flash('success', 'This post was successfully changed.');
