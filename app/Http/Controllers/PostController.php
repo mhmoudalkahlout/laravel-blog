@@ -10,6 +10,7 @@ use App\Category;
 use App\Tag;
 use Session;
 use Purifier;
+use Image;
 
 class PostController extends Controller
 {
@@ -64,15 +65,24 @@ class PostController extends Controller
                 'title' => 'required|max:255',
                 'slug' => 'required|alpha_dash|min:5|max:255|unique:posts',
                 'category_id' => 'required|integer',
-                'body' => 'required'
+                'body' => 'required',
+                'featured_image' => 'sometimes|image'
             ));
         $post = new Post;
         $post->title = $request->title;
         $post->slug = $request->slug;
         $post->category_id = $request->category_id;
         $post->body = Purifier::clean($request->body);
+        if ($request->hasFile('featured_image')) {
+            $image = $request->file('featured_image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+            Image::make($image)->resize(800, 400)->save($location);
+            $post->featured_image = $filename;
+        }
         $post->save();
-        $post->tags()->sync($request->tags, false);
+        if ($request->tags)
+            $post->tags()->sync($request->tags, false);
         Session::flash('success', 'This post was added successfully.');
         return redirect()->route('posts.show', $post->id);
     }
@@ -111,21 +121,33 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
-        $rules = array(
+        $this->validate($request, array(
             'title' => 'required|max:255',
+            'slug' => "required|alpha_dash|min:5|max:255|unique:posts,slug,$id",
             'category_id' => 'required|integer',
-            'body' => 'required'
-            );
-        if ($request->input('slug') != $post->slug)
-            $rules = array_merge($rules, ['slug' => 'required|alpha_dash|min:5|max:255|unique:posts']);
-        $this->validate($request, $rules);
+            'body' => 'required',
+            'featured_image' => 'sometimes|image'
+        ));
         
         $post->title = $request->input('title');
         $post->slug = $request->input('slug');
         $post->category_id = $request->input('category_id');
         $post->body = Purifier::clean($request->input('body'));
+        if ($request->hasFile('featured_image')) {
+            $image = $request->file('featured_image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+            Image::make($image)->resize(800, 400)->save($location);
+            $oldImge = $post->featured_image;
+            $post->featured_image = $filename;
+            if ($oldImge)
+                unlink(public_path('images/' . $oldImge));
+        }
         $post->save();
-        $post->tags()->sync($request->tags);
+        if ($request->tags)
+            $post->tags()->sync($request->tags);
+        else
+            $post->tags()->detach();
         Session::flash('success', 'This post was successfully changed.');
         return redirect()->route('posts.show', $post->id);
     }
@@ -139,6 +161,9 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+        $oldImge = $post->featured_image;
+        if ($oldImge)
+            unlink(public_path('images/' . $oldImge));
         $post->tags()->detach();
         $post->delete();
         Session::flash('success', 'This post was successfully deleted.');

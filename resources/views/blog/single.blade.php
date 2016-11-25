@@ -4,6 +4,9 @@
 @section('content')
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
+			@if ($post->featured_image && file_exists(public_path('images/'.$post->featured_image)))
+				<img src="{{ asset('images/' . $post->featured_image) }}" alt="post image" class="thumbnail" style="width: 100%; height: 100%">
+			@endif
 			<h1>{{ $post->title }}</h1>
 			<h3>Posted in: {{ $post->Category->name }}</h3>
 			<div class="well">
